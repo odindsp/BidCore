@@ -1,0 +1,66 @@
+// Copyright 2017 Pxene Inc. All Rights Reserved.
+//
+// 文件内容: 蓬景DSP竞价详情日志
+//
+//
+package com.pxene.proto;
+message DetailReqMessage {
+	optional string version = 1[default = "1.0.6"];
+	optional string bid_server_flag= 2;
+	//请求ID
+	optional string requestId = 3;
+	//请求时间戳，精确到毫秒
+	optional int64 time = 4;
+	//adx编号
+	optional int32 adxid = 5;
+
+	optional string appid = 6;
+	
+	//设备类型
+	optional int32 devicetype = 9;
+	//操作系统类型
+	optional int32 os = 10;
+	//设备所在城市地理位置
+	optional int64 city = 11;
+	//设备网络连接类型
+	optional int32 connectiontype = 12;
+	//运营商
+	optional int32 carrier = 13;
+	//错误代码
+	optional int32 nbr = 14;
+
+	message ImpDetail{
+		required string impId = 1; // 展现位id，一个广告请求下可能会有多个展现位
+		optional int32 nbr = 2;
+		message Policy {
+			//组id（策略id）
+			required int32 id = 1;
+			//错误码，为0则creatives才有值
+			optional int32 nbr = 2;
+		}
+		repeated Policy policies = 3;
+		
+		message Creative {
+			//素材（创意）ID
+			optional int32 mapid = 1;
+			//错误码
+			optional int32 nbr = 2;
+		}
+
+		repeated Creative creatives = 4;
+		
+		optional int32 type = 5; // 广告位类型 IMP_BANNER:1;  IMP_VIDEO:2; IMP_NATIVE:3
+		optional int32 width = 6; //素材宽度
+		optional int32 height = 7; //素材高度
+	}
+	
+	repeated ImpDetail impBidDetail = 15;
+	
+	message Policy {
+		//组id（策略id）
+		required int32 id = 1;
+		//错误码，为0则creatives才有值
+		optional int32 nbr = 2;
+	}
+	repeated Policy policies = 16; // 这里的策略错误码与 ImpDetail 里的不同之处：ImpDetail的是展现位与策略匹配，外层的是展现位的其他信息与策略匹配
+}

@@ -1,0 +1,136 @@
+// Copyright 2017 Pxene Inc. All Rights Reserved.
+//
+// 文件内容: 蓬景DSP流量日志
+//
+//
+package com.pxene.proto;
+
+message BidReqMessage{
+	// 协议版本号
+	optional string version = 1[default = "1.0.8"];
+	//请求ID
+	optional string requestId = 2;
+	//请求时间戳，精确到毫秒
+	optional int64 time = 3;
+	//adx编号
+	optional int32 adxid = 4;
+	//是否参与竞价
+	
+	message Impression{
+		optional string id = 1; // 展现位id
+		optional int32 type = 2; // 展现位类型 0 未知; 1 Banner; 2 Video; 3 Native
+		optional bool doBid = 3;
+		
+		message Banner{
+			optional int32 w = 1;
+			optional int32 h = 2 ;
+			repeated int32 btype = 3; // 拒绝的广告创意类型
+			repeated int32 battr = 4; // 拒绝的广告属性
+		}
+		optional Banner banner = 4;
+		
+		message Video{
+			optional int32 w = 1;
+			optional int32 h = 2;
+			optional int32 display = 3; // Video广告位类型
+			optional int32 minduration = 4; // 视频广告最小时长
+			optional int32 maxduration = 5; // 视频广告最大时长
+			repeated int32 mimes = 6; // 支持播放的视频格式
+			repeated int32 battr = 7; // 拒绝的广告属性
+		}
+		optional Video video = 5;
+		
+		message NativeAd{
+			optional int32 layout = 1; // 原生广告布局样式
+			optional int32 plcmtcnt = 2; // 广告数量
+			message AssetInfo{
+				required int64 id = 1;      
+				required int32 requiredFlag = 2; // 广告元素是否必须，1：必须，0：可选
+				required int32 type = 3; // 0 未知; 1 Title; 2 Image; 3 Data
+				optional int32 titleLen = 4; // Title元素最大文字长度
+				optional int32 imageType = 5;
+				optional int32 imageW = 6;
+				optional int32 imageWMin = 7; // 要求的最小宽度
+				optional int32 imageH = 8;
+				optional int32 imageHMin = 9; // 要求的最小高度
+				repeated int32 imageMimes = 10;
+				optional int32 dataType = 11;
+				optional int32 dataLen = 12;
+			}
+			repeated AssetInfo asset = 3;
+		}
+		optional NativeAd nativeAd = 6;
+		
+		optional int32 bidFloor = 7; // 底价
+		optional string bidFloorCur = 8; // 底价货币单位
+		optional int32 adPos = 9; // 广告位置
+		
+		message Ext{
+			optional int32 instl = 1; // 是否全插屏广告
+			optional int32 splash = 2; // 是否开屏广告
+			optional int32 advid = 3;
+		}
+		optional Ext ext = 10;
+		
+		optional int32 selMapid = 11; // 选中的创意的mapid
+		optional int32 price = 12; // 出价 单位 RMB分   (CPM)
+		optional string track_url_par = 13; // 追踪url中的参数
+		optional string curl = 14; // 点击url
+		optional string monitorcode = 15; // 创意里指定的监控码
+		repeated string imonitorurl = 16; // 创意里指定的展示监控url
+		repeated string cmonitorurl = 17; // 创意里指定的点击监控url
+		
+	}
+	repeated Impression imp = 5;
+	
+	message App{
+		optional string id = 1;
+		optional string name = 2;
+		repeated int32 cat = 3; // App类型
+		optional string bundle = 4; // App软件包名
+		optional string storeurl = 5; // App市场下载地址
+	}
+	optional App app = 6;
+	
+	message Device{
+		message DeviceIdPair{
+			required int32 type = 1;
+			required string id = 2;
+		}
+		repeated DeviceIdPair dids = 1;
+		repeated DeviceIdPair dpids = 2;
+		optional string ua = 3; // 用户浏览器User-Agent字符串
+		optional int32 location = 4;
+		optional string ip = 5;
+		optional double geoLat = 6;
+		optional double geoLon = 7;
+		optional int32 carrier = 8; // 运营商
+		optional int32 make = 9; // 制造商编码
+		optional string makestr = 10; // 制造商
+		optional string model = 11; // 型号，如”iPhone”
+		optional int32 os = 12;
+		optional string osv = 13;
+		optional int32 connectionType = 14; // 网络连接类型
+		optional int32 deviceType = 15;
+	}
+	optional Device device = 7;
+	
+	message UserInfo{
+		optional string id = 1;
+		optional int32 gender = 2; // 性别
+		optional int32 yob = 3; // 出生年份
+		optional string keywords = 4; // 用户标签
+		optional double geoLat = 5;
+		optional double geoLon = 6;
+		optional string searchkey = 7; // 用户历史搜索关键字
+	}
+	optional UserInfo userInfo = 8;
+	
+	repeated int32 bcat = 9; // 拒绝的广告行业类型
+	repeated string badv = 10; // 拒绝的广告主域名
+	optional bool isRecommend = 11; // 是否使用了智能推荐
+	optional int32 at = 12; // 流量类型，默认为0（RTB）
+	optional int32 support_deep_link = 13;
+	
+	optional string bid_server_flag= 14;
+}
